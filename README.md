@@ -6,7 +6,7 @@ Simple redirector for Dropbox links, to ensure that required CORS headers are in
 
 When a Dropbox link is fetched, it returns a redirection to the actual file location. The issue that arises is that these redirections (there can be more than one depending on the initial link) don't add the required `access-control-allow-origin` header. For example, starting with the Dropbox link `https://www.dropbox.com/s/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0`, we have the following requests:
 
-```
+```bash
 curl  -L -v \
       -H 'Origin: http://www.example.com' \
       'https://www.dropbox.com/s/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0' 2>&1 > /dev/null \
@@ -27,7 +27,7 @@ Note that, throughout the redirects, there are no `access-control-*` headers bei
 
 When doing the same from the browser:
 
-```
+```javascript
 function on (promise) {
   return promise
     .then(result => [null, result])
@@ -82,7 +82,7 @@ https://<app-name>.azurewebsites.net/api/<function-name>?code=<api-key>&dropboxU
 
 Fetching that gives us:
 
-```
+```bash
 curl  -L -v \
       -H 'Origin: http://www.example.com' \
       'https://<app-name>.azurewebsites.net/api/<function-name>?code=<api-key>&dropboxUrl=https%3A%2F%2Fwww.dropbox.com%2Fs%2F4ef30lt0c51o1uf%2FCalabiYau5.jpg%3Fdl%3D0' 2>&1 > /dev/null \
@@ -102,7 +102,7 @@ As you can see from the output above, this both skips the intermediate redirect 
 
 In the browser:
 
-```
+```javascript
 function on (promise) {
   return promise
     .then(result => [null, result])
