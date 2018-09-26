@@ -20,7 +20,7 @@ module.exports = (context, req) => {
   const dropboxUrlPathParts = dropboxUrlPath.split('/');
   const dropboxUrlRawPath = [dropboxUrlPathParts[1], 'raw', dropboxUrlPathParts[2], dropboxUrlPathParts[3]].join('/');
 
-  https.get(`https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`, function (result) {
+  https.get(`https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`, result => {
     let headers = {};
 
     headers['location'] = result.headers['location'];
