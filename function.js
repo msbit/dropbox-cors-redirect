@@ -21,6 +21,17 @@ module.exports = (context, req) => {
   const dropboxUrlRawPath = [dropboxUrlPathParts[1], 'raw', dropboxUrlPathParts[2], dropboxUrlPathParts[3]].join('/');
 
   https.get(`https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`, result => {
+    if (result.statusCode !== 302) {
+      context.res = {
+        body: {
+          error: result.statusMessage
+        },
+        status: result.statusCode
+      };
+      context.done();
+      return;
+    }
+
     let headers = {};
 
     headers['location'] = result.headers['location'];
@@ -30,7 +41,7 @@ module.exports = (context, req) => {
     context.res = {
       body: null,
       headers: headers,
-      status: 302
+      status: result.statusCode
     };
     context.done();
   });
