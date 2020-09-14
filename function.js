@@ -29,6 +29,18 @@ const handleUpstreamResponse = context => result => {
   context.done();
 };
 
+const generateDropboxUrl = (param) => {
+  const dropboxUrl = url.parse(param);
+  const path = dropboxUrl.path;
+  const pathParts = path.split('/');
+
+  pathParts.shift();
+  pathParts.splice(1, 0, 'raw');
+  const rawPath = pathParts.join('/');
+
+  return `https://${dropboxUrl.hostname}/${rawPath}`;
+};
+
 module.exports = (context, req) => {
   const dropboxUrlParam = req.query.dropboxUrl;
 
@@ -37,18 +49,8 @@ module.exports = (context, req) => {
     return;
   }
 
-  const dropboxUrl = url.parse(dropboxUrlParam);
-  const dropboxUrlPath = dropboxUrl.path;
-  const dropboxUrlPathParts = dropboxUrlPath.split('/');
-  const dropboxUrlRawPath = [
-    dropboxUrlPathParts[1],
-    'raw',
-    dropboxUrlPathParts[2],
-    dropboxUrlPathParts[3]
-  ].join('/');
-
   https.get(
-    `https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`,
+    generateDropboxUrl(dropboxUrlParam),
     handleUpstreamResponse(context)
   );
 };
