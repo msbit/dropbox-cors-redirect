@@ -2,7 +2,7 @@ const https = require('https');
 const url = require('url');
 
 class HttpError extends Error {
-  constructor (code, message) {
+  constructor (message, code) {
     super(message);
 
     this.code = code;
@@ -11,7 +11,7 @@ class HttpError extends Error {
 
 const generateDropboxUrl = (param) => {
   if (!param || !param.startsWith('https://www.dropbox.com/')) {
-    throw new HttpError(403, 'Forbidden');
+    throw new HttpError('Forbidden', 403);
   }
 
   const dropboxUrl = url.parse(param);
