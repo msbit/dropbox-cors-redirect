@@ -35,8 +35,7 @@ const respondWithError = (context, status, error) => {
 
 const upstreamResponseHandler = context => response => {
   if (response.statusCode !== 302) {
-    respondWithError(context, response.statusCode, response.statusMessage);
-    return;
+    throw new HttpError(response.statusMessage, response.statusCode);
   }
 
   context.res = {
@@ -51,16 +50,14 @@ const upstreamResponseHandler = context => response => {
 };
 
 module.exports = (context, req) => {
-  let dropboxUrl;
-
   try {
-    dropboxUrl = generateDropboxUrl(req.query.dropboxUrl);
+    https.get(
+      generateDropboxUrl(req.query.dropboxUrl),
+      upstreamResponseHandler(context)
+    );
   } catch (error) {
     respondWithError(context, error.code, error.message);
-    return;
   }
-
-  https.get(dropboxUrl, upstreamResponseHandler(context));
 };
 
 module.exports.generateDropboxUrl = generateDropboxUrl;

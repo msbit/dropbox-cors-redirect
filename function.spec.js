@@ -73,13 +73,7 @@ test('upstreamResponseHandler with not found result', () => {
     statusMessage: 'Not Found'
   };
 
-  upstreamResponseHandler(context)(result);
-
-  expect(context.res).toStrictEqual({
-    body: {
-      error: 'Not Found'
-    },
-    status: 404
-  });
-  expect(context.done.mock.calls.length).toBe(1);
+  expect(() => {
+    upstreamResponseHandler(context)(result);
+  }).toThrow('Not Found');
 });
