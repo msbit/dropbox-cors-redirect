@@ -15,15 +15,12 @@ const handleUpstreamResponse = context => result => {
     return;
   }
 
-  const headers = {};
-
-  headers.location = result.headers.location;
-
-  headers['access-control-allow-origin'] = '*';
-
   context.res = {
     body: null,
-    headers: headers,
+    headers: {
+      'access-control-allow-origin': '*',
+      location: result.headers.location
+    },
     status: result.statusCode
   };
   context.done();
