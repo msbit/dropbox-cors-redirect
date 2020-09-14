@@ -1,6 +1,14 @@
 const https = require('https');
 const url = require('url');
 
+class HttpError extends Error {
+  constructor (code, message) {
+    super(message);
+
+    this.code = code;
+  }
+}
+
 const respondWithError = (context, status, error) => {
   context.res = {
     body: { error },
@@ -27,6 +35,10 @@ const handleUpstreamResponse = context => result => {
 };
 
 const generateDropboxUrl = (param) => {
+  if (!param || !param.startsWith('https://www.dropbox.com/')) {
+    throw new HttpError(403, 'Forbidden');
+  }
+
   const dropboxUrl = url.parse(param);
   const path = dropboxUrl.path;
   const pathParts = path.split('/');
@@ -39,17 +51,16 @@ const generateDropboxUrl = (param) => {
 };
 
 module.exports = (context, req) => {
-  const dropboxUrlParam = req.query.dropboxUrl;
+  let dropboxUrl;
 
-  if (!dropboxUrlParam || !dropboxUrlParam.startsWith('https://www.dropbox.com/')) {
-    respondWithError(context, 403, 'Forbidden');
+  try {
+    dropboxUrl = generateDropboxUrl(req.query.dropboxUrl);
+  } catch (error) {
+    respondWithError(context, error.code, error.message);
     return;
   }
 
-  https.get(
-    generateDropboxUrl(dropboxUrlParam),
-    handleUpstreamResponse(context)
-  );
+  https.get(dropboxUrl, handleUpstreamResponse(context));
 };
 
 module.exports.generateDropboxUrl = generateDropboxUrl;

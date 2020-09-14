@@ -4,9 +4,21 @@ const generateDropboxUrl = func.generateDropboxUrl;
 const handleUpstreamResponse = func.handleUpstreamResponse;
 const respondWithError = func.respondWithError;
 
-test('generateDropboxUrl', () => {
+test('generateDropboxUrl with dropbox url', () => {
   const result = generateDropboxUrl('https://www.dropbox.com/s/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0');
   expect(result).toBe('https://www.dropbox.com/s/raw/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0');
+});
+
+test('generateDropboxUrl with non-dropbox url', () => {
+  expect(() => {
+    generateDropboxUrl('https://www.example.com/s/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0');
+  }).toThrow('Forbidden');
+});
+
+test('generateDropboxUrl with non-HTTPS url', () => {
+  expect(() => {
+    generateDropboxUrl('http://www.dropbox.com/s/4ef30lt0c51o1uf/CalabiYau5.jpg?dl=0');
+  }).toThrow('Forbidden');
 });
 
 test('handleUpstreamResponse with found result', () => {
