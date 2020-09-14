@@ -22,25 +22,19 @@ test('generateDropboxUrl with non-HTTPS url', () => {
 });
 
 test('respondWithError', () => {
-  const context = {
-    done: jest.fn()
-  };
+  const context = { done: jest.fn() };
 
   respondWithError(context, 403, 'Forbidden');
 
   expect(context.res).toStrictEqual({
-    body: {
-      error: 'Forbidden'
-    },
+    body: { error: 'Forbidden' },
     status: 403
   });
   expect(context.done.mock.calls.length).toBe(1);
 });
 
 test('upstreamResponseHandler with found result', () => {
-  const context = {
-    done: jest.fn()
-  };
+  const context = { done: jest.fn() };
 
   const result = {
     headers: {
@@ -64,16 +58,12 @@ test('upstreamResponseHandler with found result', () => {
 });
 
 test('upstreamResponseHandler with not found result', () => {
-  const context = {
-    done: jest.fn()
-  };
+  const context = { done: jest.fn() };
 
   const result = {
     statusCode: 404,
     statusMessage: 'Not Found'
   };
 
-  expect(() => {
-    upstreamResponseHandler(context)(result);
-  }).toThrow('Not Found');
+  expect(() => upstreamResponseHandler(context)(result)).toThrow('Not Found');
 });
