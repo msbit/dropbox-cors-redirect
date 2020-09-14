@@ -9,31 +9,6 @@ class HttpError extends Error {
   }
 }
 
-const respondWithError = (context, status, error) => {
-  context.res = {
-    body: { error },
-    status
-  };
-  context.done();
-};
-
-const handleUpstreamResponse = context => result => {
-  if (result.statusCode !== 302) {
-    respondWithError(context, result.statusCode, result.statusMessage);
-    return;
-  }
-
-  context.res = {
-    body: null,
-    headers: {
-      'access-control-allow-origin': '*',
-      location: result.headers.location
-    },
-    status: result.statusCode
-  };
-  context.done();
-};
-
 const generateDropboxUrl = (param) => {
   if (!param || !param.startsWith('https://www.dropbox.com/')) {
     throw new HttpError(403, 'Forbidden');
@@ -50,6 +25,31 @@ const generateDropboxUrl = (param) => {
   return `https://${dropboxUrl.hostname}/${rawPath}`;
 };
 
+const respondWithError = (context, status, error) => {
+  context.res = {
+    body: { error },
+    status
+  };
+  context.done();
+};
+
+const upstreamResponseHandler = context => response => {
+  if (response.statusCode !== 302) {
+    respondWithError(context, response.statusCode, response.statusMessage);
+    return;
+  }
+
+  context.res = {
+    body: null,
+    headers: {
+      'access-control-allow-origin': '*',
+      location: response.headers.location
+    },
+    status: response.statusCode
+  };
+  context.done();
+};
+
 module.exports = (context, req) => {
   let dropboxUrl;
 
@@ -60,9 +60,9 @@ module.exports = (context, req) => {
     return;
   }
 
-  https.get(dropboxUrl, handleUpstreamResponse(context));
+  https.get(dropboxUrl, upstreamResponseHandler(context));
 };
 
 module.exports.generateDropboxUrl = generateDropboxUrl;
-module.exports.handleUpstreamResponse = handleUpstreamResponse;
 module.exports.respondWithError = respondWithError;
+module.exports.upstreamResponseHandler = upstreamResponseHandler;
