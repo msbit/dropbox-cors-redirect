@@ -9,7 +9,7 @@ class HttpError extends Error {
   }
 }
 
-const generateDropboxUrl = (param) => {
+const generateDropboxUrl = param => {
   if (!param || !param.startsWith('https://www.dropbox.com/')) {
     throw new HttpError('Forbidden', 403);
   }
@@ -49,10 +49,10 @@ const upstreamResponseHandler = context => response => {
   context.done();
 };
 
-module.exports = (context, req) => {
+module.exports = (context, { query }) => {
   try {
     https.get(
-      generateDropboxUrl(req.query.dropboxUrl),
+      generateDropboxUrl(query.dropboxUrl),
       upstreamResponseHandler(context)
     );
   } catch (error) {
