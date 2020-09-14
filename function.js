@@ -9,6 +9,26 @@ const respondWithError = (context, status, error) => {
   context.done();
 };
 
+const handleUpstreamResponse = context => result => {
+  if (result.statusCode !== 302) {
+    respondWithError(context, result.statusCode, result.statusMessage);
+    return;
+  }
+
+  const headers = {};
+
+  headers.location = result.headers.location;
+
+  headers['access-control-allow-origin'] = '*';
+
+  context.res = {
+    body: null,
+    headers: headers,
+    status: result.statusCode
+  };
+  context.done();
+};
+
 module.exports = (context, req) => {
   const dropboxUrlParam = req.query.dropboxUrl;
 
@@ -22,23 +42,8 @@ module.exports = (context, req) => {
   const dropboxUrlPathParts = dropboxUrlPath.split('/');
   const dropboxUrlRawPath = [dropboxUrlPathParts[1], 'raw', dropboxUrlPathParts[2], dropboxUrlPathParts[3]].join('/');
 
-  https.get(`https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`, result => {
-    if (result.statusCode !== 302) {
-      respondWithError(context, result.statusCode, result.statusMessage);
-      return;
-    }
-
-    const headers = {};
-
-    headers.location = result.headers.location;
-
-    headers['access-control-allow-origin'] = '*';
-
-    context.res = {
-      body: null,
-      headers: headers,
-      status: result.statusCode
-    };
-    context.done();
-  });
+  https.get(
+    `https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`,
+    handleUpstreamResponse(context)
+  );
 };
