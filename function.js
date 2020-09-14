@@ -55,8 +55,8 @@ module.exports = (context, { query }) => {
       generateDropboxUrl(query.dropboxUrl),
       upstreamResponseHandler(context)
     );
-  } catch (error) {
-    respondWithError(context, error.code, error.message);
+  } catch ({ code, message }) {
+    respondWithError(context, code, message);
   }
 };
 
