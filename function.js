@@ -54,3 +54,7 @@ module.exports = (context, req) => {
     handleUpstreamResponse(context)
   );
 };
+
+module.exports.generateDropboxUrl = generateDropboxUrl;
+module.exports.handleUpstreamResponse = handleUpstreamResponse;
+module.exports.respondWithError = respondWithError;
