@@ -1,17 +1,19 @@
 const https = require('https');
 const url = require('url');
 
+const respondWithError = (context, status, error) => {
+  context.res = {
+    body: { error },
+    status
+  };
+  context.done();
+};
+
 module.exports = (context, req) => {
   const dropboxUrlParam = req.query.dropboxUrl;
 
   if (!dropboxUrlParam || !dropboxUrlParam.startsWith('https://www.dropbox.com/')) {
-    context.res = {
-      body: {
-        error: 'Forbidden'
-      },
-      status: 403
-    };
-    context.done();
+    respondWithError(context, 403, 'Forbidden');
     return;
   }
 
@@ -22,13 +24,7 @@ module.exports = (context, req) => {
 
   https.get(`https://${dropboxUrl.hostname}/${dropboxUrlRawPath}`, result => {
     if (result.statusCode !== 302) {
-      context.res = {
-        body: {
-          error: result.statusMessage
-        },
-        status: result.statusCode
-      };
-      context.done();
+      respondWithError(context, result.statusCode, result.statusMessage);
       return;
     }
 
