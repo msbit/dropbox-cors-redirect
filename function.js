@@ -32,9 +32,9 @@ module.exports = (context, req) => {
       return;
     }
 
-    let headers = {};
+    const headers = {};
 
-    headers['location'] = result.headers['location'];
+    headers.location = result.headers.location;
 
     headers['access-control-allow-origin'] = '*';
 
