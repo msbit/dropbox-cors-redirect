@@ -1,0 +1,19 @@
+{
+  "name": "dropbox-cors-redirect",
+  "version": "1.0.0",
+  "description": "Simple redirector for Dropbox links, to ensure that required CORS headers are in place.",
+  "main": "function.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/msbit/dropbox-cors-redirect.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/msbit/dropbox-cors-redirect/issues"
+  },
+  "homepage": "https://github.com/msbit/dropbox-cors-redirect#readme"
+}
