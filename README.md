@@ -132,4 +132,10 @@ gives us:
 [Log] Yay: status: 200 redirected: true type: cors (example.js, line 16)
 ```
 
+### Building
+
+```
+npx tsc --module node18 --target es2024 function.ts
+```
+
 #### Content image (`CalabiYau5.jpg`) attribution: Andrew J. Hanson, Indiana University.
